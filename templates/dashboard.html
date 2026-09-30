@@ -1,0 +1,28 @@
+{% extends "base.html" %}{% block content %}
+<h1>Hi{% if current_user.full_name %}, {{ current_user.full_name }}{% endif %} 👋</h1>
+{% include "_month.html" %}
+{% set c = current_user.currency %}
+<div class="grid">
+  <div class="stat"><small>Income</small><b>{{ c }}{{ '{:,.0f}'.format(s.income) }}</b></div>
+  <div class="stat"><small>Expenses</small><b>{{ c }}{{ '{:,.0f}'.format(s.expenses) }}</b></div>
+  <div class="stat"><small>Savings ({{ s.savings_rate }}%)</small><b class="{{ 'pos' if s.savings>=0 else 'neg' }}">{{ c }}{{ '{:,.0f}'.format(s.savings) }}</b></div>
+  <div class="stat"><small>Health score</small><b>{{ s.health_score }}/100</b><small>{{ health_label(s.health_score) }}</small></div>
+</div>
+{% if s.overspent %}<div class="flash error">⚠ Overspending in: {{ s.overspent|map(attribute='name')|join(', ') }}</div>{% endif %}
+<div class="two">
+  <div class="card"><h2>Expense breakdown</h2><canvas id="catChart"></canvas></div>
+  <div class="card"><h2>Budget vs actual</h2><canvas id="budgetChart"></canvas></div>
+</div>
+<div class="card"><h2>6-month trend</h2><canvas id="trendChart" height="110"></canvas></div>
+<div class="card"><h2>AI recommendations</h2>
+  <p><button class="btn" onclick="getInsight('analysis',this)">Analyse my spending</button>
+  <button class="btn sec" onclick="getInsight('cost',this)">Cost optimisation</button>
+  <button class="btn sec" onclick="getInsight('emergency',this)">Emergency fund</button></p>
+  <div id="insight-box">
+  {% for i in insights %}<p><span class="tag">{{ 'Gemini AI' if i.source=='ai' else 'Rule-based' }} · {{ i.kind }}</span></p><div class="pre">{{ i.content }}</div>{% else %}<span class="pre">Tap a button to get personalised advice.</span>{% endfor %}
+  </div></div>
+<div class="card"><h2>Savings progress</h2>
+{% for g in goals %}<p>{{ g.name }} — {{ c }}{{ '{:,.0f}'.format(g.saved) }} / {{ '{:,.0f}'.format(g.target_amount) }}</p><div class="bar"><i style="width:{{ g.pct }}%"></i></div>{% else %}<a href="{{ url_for('savings') }}">Create a savings goal</a>{% endfor %}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+{% endblock %}

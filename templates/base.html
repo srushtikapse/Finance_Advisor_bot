@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="csrf-token" content="{{ csrf_token() }}">
+<title>{% block title %}Finance Advisor{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body data-month="{{ cur_month }}">
+<nav>
+  <a class="brand" href="{{ url_for('index') }}">💰 Finance Advisor</a>
+  {% if current_user.is_authenticated %}
+  <a href="{{ url_for('dashboard') }}">Dashboard</a>
+  <a href="{{ url_for('income') }}">Income</a>
+  <a href="{{ url_for('expenses') }}">Expenses</a>
+  <a href="{{ url_for('budget') }}">Budget</a>
+  <a href="{{ url_for('savings') }}">Savings</a>
+  <a href="{{ url_for('reports') }}">Reports</a>
+  <a href="{{ url_for('categories') }}">Categories</a>
+  <a href="{{ url_for('profile') }}">Profile</a>
+  <form method="post" action="{{ url_for('logout') }}" style="display:inline">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button>Logout</button></form>
+  {% endif %}
+</nav>
+<main>
+{% for cat, msg in get_flashed_messages(with_categories=true) %}<div class="flash {{ cat }}">{{ msg }}</div>{% endfor %}
+{% block content %}{% endblock %}
+</main>
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body></html>

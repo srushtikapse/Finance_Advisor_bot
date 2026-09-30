@@ -1,0 +1,9 @@
+{% extends "base.html" %}{% block content %}
+<h1>Profile</h1><div class="card"><form class="inline" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label>Full name<input name="full_name" value="{{ current_user.full_name }}"></label>
+<label>Email<input value="{{ current_user.email }}" disabled></label>
+<label>Currency symbol<input name="currency" value="{{ current_user.currency }}" maxlength="5" size="4"></label>
+<label>Savings goal (% of income)<input name="savings_goal_pct" type="number" step="1" min="0" max="90" value="{{ current_user.savings_goal_pct|int }}"></label>
+<label>Old password<input type="password" name="old_password"></label>
+<label>New password<input type="password" name="new_password" minlength="8"></label>
+<button class="btn">Save</button></form></div>{% endblock %}

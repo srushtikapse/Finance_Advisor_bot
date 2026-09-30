@@ -1,0 +1,15 @@
+{% extends "base.html" %}{% block content %}
+<h1>Expenses</h1>
+<div class="card"><form class="inline" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label>Category<select name="category_id">{% for c in cats %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}</select></label>
+<label>Amount<input name="amount" type="number" step="0.01" min="0.01" required></label>
+<label>Date<input name="date" type="date" value="{{ today }}"></label>
+<label>Description<input name="description"></label><button class="btn">Log expense</button></form></div>
+<form class="mfilter" method="get"><label>Month<input type="month" name="month" value="{{ cur_month }}"></label>
+<label>Category<select name="category_id"><option value="">All</option>{% for c in cats %}<option value="{{ c.id }}" {{ 'selected' if cid==c.id }}>{{ c.name }}</option>{% endfor %}</select></label><button class="btn sec">Filter</button></form>
+<div class="card"><table><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th></th></tr>
+{% for r in rows %}<tr><td>{{ r.date }}</td><td>{{ r.category.name }}</td><td>{{ r.description }}</td><td>{{ current_user.currency }}{{ '{:,.2f}'.format(r.amount) }}</td>
+<td><form method="post" action="{{ url_for('delete_expense', rid=r.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn del">Delete</button></form></td></tr>
+{% else %}<tr><td colspan="5">No expenses found.</td></tr>{% endfor %}
+<tr><th colspan="3">Total</th><th colspan="2">{{ current_user.currency }}{{ '{:,.2f}'.format(total) }}</th></tr></table></div>
+{% endblock %}

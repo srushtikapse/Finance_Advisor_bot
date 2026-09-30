@@ -1,0 +1,7 @@
+{% extends "base.html" %}{% block content %}
+<h1>Expense categories</h1>
+<div class="card"><form class="inline" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label>New category<input name="name" required maxlength="50"></label><button class="btn">Add</button></form></div>
+<div class="card"><table>{% for c in cats %}<tr><td>{{ c.name }}</td><td>
+<form method="post" action="{{ url_for('delete_category', cid=c.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn del">Delete</button></form></td></tr>{% endfor %}</table></div>
+{% endblock %}

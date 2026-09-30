@@ -1,0 +1,18 @@
+{% extends "base.html" %}{% block content %}
+<h1>Budget plan</h1>{% include "_month.html" %}
+{% set c = current_user.currency %}
+<div class="card"><form method="post" action="{{ url_for('budget_generate', month=cur_month) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<button class="btn">✨ Generate budget with AI</button>
+<small> Uses Gemini if configured; otherwise a rule-based plan. Reserves your {{ current_user.savings_goal_pct|round|int }}% savings goal.</small></form>
+{% if note %}<p class="pre"><span class="tag">{{ 'Gemini AI' if note.source=='ai' else 'Rule-based' }}</span> {{ note.content }}</p>{% endif %}</div>
+<div class="card"><form method="post" action="{{ url_for('budget_save', month=cur_month) }}">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<table><tr><th>Category</th><th>Limit</th><th>Spent</th><th>Status</th></tr>
+{% for x in s.categories %}<tr><td>{{ x.name }}</td>
+<td><input name="limit_{{ x.id }}" type="number" step="0.01" min="0" value="{{ x.limit or '' }}" style="width:110px"></td>
+<td>{{ c }}{{ '{:,.0f}'.format(x.spent) }}</td>
+<td>{% if x.limit %}<div class="bar"><i class="{{ 'over' if x.over }}" style="width:{{ [x.pct,100]|min }}%"></i></div><small>{{ x.pct }}%{{ ' — over budget' if x.over }}</small>{% else %}<small>no limit</small>{% endif %}</td></tr>{% endfor %}
+<tr><th>Total</th><th>{{ c }}{{ '{:,.0f}'.format(budget_total) }}</th><th>{{ c }}{{ '{:,.0f}'.format(s.expenses) }}</th><th></th></tr></table>
+<p><button class="btn sec">Save limits</button></p></form></div>
+{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block content %}
+<h1>Monthly reports</h1>
+<div class="card"><form class="inline" method="post" action="{{ url_for('report_generate') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label>Month<input type="month" name="month" value="{{ cur_month }}"></label><button class="btn">Generate report</button></form></div>
+<div class="card"><table><tr><th>Month</th><th>Income</th><th>Expenses</th><th>Savings</th><th>Score</th><th></th></tr>
+{% for r in rows %}<tr><td>{{ r.year }}-{{ '%02d'|format(r.month) }}</td><td>{{ '{:,.0f}'.format(r.total_income) }}</td><td>{{ '{:,.0f}'.format(r.total_expenses) }}</td><td>{{ '{:,.0f}'.format(r.savings) }}</td><td>{{ r.health_score }}</td><td><a href="{{ url_for('report_view', rid=r.id) }}">View</a></td></tr>
+{% else %}<tr><td colspan="6">No reports yet.</td></tr>{% endfor %}</table></div>
+{% endblock %}

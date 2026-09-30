@@ -1,0 +1,13 @@
+{% extends "base.html" %}{% block content %}
+{% set c = current_user.currency %}
+<h1>Report — {{ r.year }}-{{ '%02d'|format(r.month) }}</h1>
+<div class="grid">
+<div class="stat"><small>Income</small><b>{{ c }}{{ '{:,.0f}'.format(r.total_income) }}</b></div>
+<div class="stat"><small>Expenses</small><b>{{ c }}{{ '{:,.0f}'.format(r.total_expenses) }}</b></div>
+<div class="stat"><small>Savings ({{ r.savings_rate }}%)</small><b>{{ c }}{{ '{:,.0f}'.format(r.savings) }}</b></div>
+<div class="stat"><small>Health</small><b>{{ r.health_score }}/100</b><small>{{ health_label(r.health_score) }}</small></div></div>
+<div class="card"><h2>Category-wise expenses</h2><table><tr><th>Category</th><th>Spent</th><th>Limit</th></tr>
+{% for x in s.categories if x.spent or x.limit %}<tr><td>{{ x.name }}</td><td class="{{ 'neg' if x.over }}">{{ '{:,.0f}'.format(x.spent) }}</td><td>{{ '{:,.0f}'.format(x.limit) if x.limit else '—' }}</td></tr>{% endfor %}</table></div>
+<div class="card"><h2>Recommendations & next-month goals</h2><div class="pre">{{ r.summary_text }}</div></div>
+<button class="btn sec" onclick="window.print()">Print / Save PDF</button>
+{% endblock %}

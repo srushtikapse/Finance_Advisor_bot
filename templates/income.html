@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block content %}
+<h1>Income</h1>
+<div class="card"><form class="inline" method="post"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<label>Source / client<input name="source" required></label>
+<label>Amount<input name="amount" type="number" step="0.01" min="0.01" required></label>
+<label>Date<input name="date" type="date" value="{{ today }}"></label>
+<label>Note<input name="note"></label><button class="btn">Add income</button></form></div>
+{% include "_month.html" %}
+<div class="card"><table><tr><th>Date</th><th>Source</th><th>Amount</th><th>Note</th><th></th></tr>
+{% for r in rows %}<tr><td>{{ r.date }}</td><td>{{ r.source }}</td><td>{{ current_user.currency }}{{ '{:,.2f}'.format(r.amount) }}</td><td>{{ r.note }}</td>
+<td><form method="post" action="{{ url_for('delete_income', rid=r.id) }}"><input type="hidden" name="csrf_token" value="{{ csrf_token() }}"><button class="btn del">Delete</button></form></td></tr>
+{% else %}<tr><td colspan="5">No income this month.</td></tr>{% endfor %}
+<tr><th colspan="2">Total</th><th colspan="3">{{ current_user.currency }}{{ '{:,.2f}'.format(total) }}</th></tr></table></div>
+{% endblock %}
